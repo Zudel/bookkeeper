@@ -71,6 +71,7 @@
     <module>tests</module>
     <module>native-io</module>
     <module>testtools</module>
+    <module>jacoco-tests</module>
   </modules>
   <mailingLists>
     <mailingList>
@@ -112,6 +113,13 @@
     <testRetryCount>2</testRetryCount>
     <src.dir>src/main/java</src.dir>
     <test.additional.args />
+
+    <!-- SonarCloud additions -->
+    <sonar.organization>zudel</sonar.organization>
+    <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
+    <!-- JaCoCo additions -->
+    <sonar.coverage.jacoco.xmlReportPaths>../jacoco-tests/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 
     <!-- dependencies -->
     <arquillian-cube.version>1.18.2</arquillian-cube.version>
@@ -881,6 +889,11 @@
     </extensions>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.sonarsource.scanner.maven</groupId>
+          <artifactId>sonar-maven-plugin</artifactId>
+          <version>3.8.0.2131</version>
+        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
