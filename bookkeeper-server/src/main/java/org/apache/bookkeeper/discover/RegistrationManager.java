@@ -19,6 +19,7 @@
 package org.apache.bookkeeper.discover;
 
 import org.apache.bookkeeper.bookie.BookieException;
+import org.apache.bookkeeper.bookie.LedgerStorage;
 import org.apache.bookkeeper.common.annotation.InterfaceAudience.LimitedPrivate;
 import org.apache.bookkeeper.common.annotation.InterfaceStability.Evolving;
 import org.apache.bookkeeper.net.BookieId;
@@ -30,7 +31,7 @@ import org.apache.bookkeeper.versioning.Versioned;
  */
 @LimitedPrivate
 @Evolving
-public interface RegistrationManager extends AutoCloseable {
+public interface RegistrationManager extends AutoCloseable { //delete ledgerStorage
 
     /**
      * Registration Listener on listening the registration state.

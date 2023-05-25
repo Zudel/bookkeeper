@@ -56,6 +56,7 @@ import org.slf4j.LoggerFactory;
     name = AUDITOR_SCOPE,
     help = "Auditor related stats"
 )
+
 public class AuditorElector {
     private static final Logger LOG = LoggerFactory
             .getLogger(AuditorElector.class);
