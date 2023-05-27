@@ -26,7 +26,7 @@
   <version>4.16.0-SNAPSHOT</version>
   <artifactId>bookkeeper</artifactId>
   <packaging>pom</packaging>
-  <name>BookKeeper</name>
+  <name>BookKeeper-parent</name>
   <url>http://bookkeeeper.apache.org</url>
   <inceptionYear>2011</inceptionYear>
   <licenses>
@@ -119,8 +119,10 @@
     <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
     <!-- JaCoCo additions -->
-    <sonar.coverage.jacoco.xmlReportPaths>../jacoco-tests/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-
+    <sonar.coverage.jacoco.xmlReportPaths>
+      ${project.basedir}/jacoco-tests/target/site/
+      jacoco-aggregate/jacoco.xml
+    </sonar.coverage.jacoco.xmlReportPaths>
     <!-- dependencies -->
     <arquillian-cube.version>1.18.2</arquillian-cube.version>
     <arquillian-junit.version>1.6.0.Final</arquillian-junit.version>
@@ -928,6 +930,17 @@
     </pluginManagement>
     <plugins>
       <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>com.github.spotbugs</groupId>
         <artifactId>spotbugs-maven-plugin</artifactId>
         <version>${spotbugs-maven-plugin.version}</version>
@@ -1122,6 +1135,38 @@
     </plugins>
   </build>
   <profiles>
+    <profile>
+      <id>coverage</id>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.jacoco</groupId>
+            <artifactId>jacoco-maven-plugin</artifactId>
+            <version>${jacoco-maven-plugin.version}</version>
+
+            <executions>
+              <execution>
+                <id>prepare-agent</id>
+                <goals>
+                  <goal>prepare-agent</goal>
+                </goals>
+              </execution>
+              <execution>
+                <id>report</id>
+                <goals>
+                  <goal>report</goal>
+                </goals>
+                <configuration>
+                  <formats>
+                    <format>XML</format>
+                  </formats>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
     <profile>
       <!-- profile used by jenkins CI -->
       <id>code-coverage</id>

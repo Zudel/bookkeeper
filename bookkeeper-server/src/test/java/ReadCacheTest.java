@@ -8,7 +8,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-
+import org.junit.runners.Parameterized.Parameters;
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -49,12 +49,11 @@ import static org.junit.Assert.assertEquals;
  *
  */
 
-
-
-@RunWith(value=Parameterized.class)
+@RunWith(value= Parameterized.class)
 public class ReadCacheTest {
     private static ReadCache readCache;
     private static ByteBufAllocator allocator;
+    private  ByteBuf expectedEntry;
     //i due long rappresentano ledgerId e entryID
     private long ledgerId;
     private long entryId;
@@ -74,7 +73,14 @@ public class ReadCacheTest {
         maxCacheSize = 100;
         maxSegmentSize = 10; // must be > 0, otherwise we will get an exception
 
-        readCache = new ReadCache(allocator, 0, maxSegmentSize);
+        readCache = new ReadCache(allocator, maxCacheSize, maxSegmentSize);
+    }
+
+    public ReadCacheTest(ByteBuf expectedEntry, ByteBuf entry, long ledgerId, long entryId) {
+        this.expectedEntry = expectedEntry;
+        this.entry = entry;
+        this.ledgerId = ledgerId;
+        this.entryId = entryId;
     }
 
     //write test cases here for ReadCacheTest class using Junit4
@@ -90,24 +96,24 @@ public class ReadCacheTest {
         //crea un oggetto ByteBuf di dimensione 10
         entry = ByteBufAllocator.DEFAULT.buffer(10);
         System.out.println("entry: " + entry);
-        System.out.println("entry.readableBytes(): " + entry.readableBytes());
-        System.out.println("entry.capacity(): " + entry.capacity());
-        System.out.println(ledgerId);
-        System.out.println(entryId);
-        readCache.put(11, 10, entry);
-        assertEquals(null, this.readCache.get(2, 1));
+        System.out.println(" expected " + expectedEntry);
+        readCache.put(ledgerId, entryId, entry);
+        assertEquals(expectedEntry, readCache.get(ledgerId, entryId) );
 
     }
 
-    @Parameterized.Parameters
-    public static Collection<ByteBuf[]> getParameters(){
-        return Arrays.asList(new ByteBuf[][]{
-                {Unpooled.buffer(10)},
-                {Unpooled.buffer(1)},
-                {Unpooled.buffer(1)},
-        });
+    @Parameters
+    public static Collection<Object[]> getParameters() {
+        // Creazione dell'oggetto ByteBuf con le stesse proprietà
+        ByteBuf byteBuf = UnpooledByteBufAllocator.DEFAULT.heapBuffer(2);
+        byteBuf.readerIndex(0);
+        byteBuf.writerIndex(0);
+        return Arrays.asList(new Object[][]{
+                {byteBuf, byteBuf, 3L, 3L}, // ByteBuf (expected object), ByteBuf, long, long
+                {Unpooled.buffer(1), Unpooled.buffer(1), 3L, 3L}, // ByteBuf, ByteBuf, long, long
+                {Unpooled.buffer(1), byteBuf, 3L, 3L}, // ByteBuf, ByteBuf, long, long
+        }); //Il valore 3L indica un valore di tipo long con il valore numerico 3. Aggiungendo il suffisso "L" a 3, lo dichiari come un valore long invece di un valore int predefinito.
     }
-
 }
 
 
