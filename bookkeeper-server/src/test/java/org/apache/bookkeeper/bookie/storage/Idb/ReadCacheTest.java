@@ -1,3 +1,5 @@
+package org.apache.bookkeeper.bookie.storage.Idb;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
@@ -54,14 +56,11 @@ public class ReadCacheTest {
     private static ReadCache readCache;
     private static ByteBufAllocator allocator;
     private  ByteBuf expectedEntry;
-    //i due long rappresentano ledgerId e entryID
     private long ledgerId;
     private long entryId;
         private static long maxCacheSize;
         private static int maxSegmentSize;
     private ByteBuf entry;
-
-    //crea un oggetto ReadCache con i parametri allocator, maxCacheSize, maxSegmentSize
 
     @BeforeClass
     public static void setup() {
@@ -82,9 +81,6 @@ public class ReadCacheTest {
         this.ledgerId = ledgerId;
         this.entryId = entryId;
     }
-
-    //write test cases here for ReadCacheTest class using Junit4
-
 
     /**
      * public void put(long ledgerId, long entryId, ByteBuf entry)
@@ -112,7 +108,7 @@ public class ReadCacheTest {
                 {byteBuf, byteBuf, 3L, 3L}, // ByteBuf (expected object), ByteBuf, long, long
                 {Unpooled.buffer(1), Unpooled.buffer(1), 3L, 3L}, // ByteBuf, ByteBuf, long, long
                 {Unpooled.buffer(1), byteBuf, 3L, 3L}, // ByteBuf, ByteBuf, long, long
-        }); //Il valore 3L indica un valore di tipo long con il valore numerico 3. Aggiungendo il suffisso "L" a 3, lo dichiari come un valore long invece di un valore int predefinito.
+        });
     }
 }
 
@@ -122,7 +118,6 @@ public class ReadCacheTest {
 * in una cache di segmenti.
 
 Ecco una spiegazione delle operazioni svolte dal metodo:
-
 Calcola la dimensione dell'entry utilizzando il metodo readableBytes() dell'oggetto entry di tipo ByteBuf.
 Calcola la dimensione allineata (alignedSize) alla dimensione più vicina multipla di 64 della dimensione dell'entry.
 Acquisisce una lettura del lock per la sezione di codice successiva.

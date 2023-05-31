@@ -1,3 +1,5 @@
+package org.apache.bookkeeper.bookie.storage.Idb;
+
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.util.ByteProcessor;
