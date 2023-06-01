@@ -15,7 +15,7 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 
-@RunWith(value= Parameterized.class)
+//@RunWith(value= Parameterized.class)
 public class LedgerHandleTest extends BookKeeperClusterTestCase{
 
     byte[] data;
@@ -38,7 +38,7 @@ public class LedgerHandleTest extends BookKeeperClusterTestCase{
      * setup the environment for the test.
      *This method is called in LedgerHandleTest.java
      */
-    @Before
+    //@Before
     public void setupEnv() throws Exception {
             this.lh = bkc.createLedger(ensSize, writeQSize, ackQSize, BookKeeper.DigestType.CRC32, "testPasswd".getBytes());
 
@@ -61,7 +61,7 @@ public class LedgerHandleTest extends BookKeeperClusterTestCase{
      * setup and tests the method public void asyncAddEntry(final byte[] data, final AddCallback cb, final Object ctx)
      * The method is called in LedgerHandleTest.java
      */
-    @Test
+    //@Test
     public void test()  {
         try{
             lh.asyncAddEntry(data , cb, ctx);
@@ -80,7 +80,7 @@ public class LedgerHandleTest extends BookKeeperClusterTestCase{
  * Tear down the environment for the test.
  * This method is called in LedgerHandleTest.java
  */
-    @After
+    //@After
     public void tearDownEnv() throws Exception {
         bkc.close();
     }

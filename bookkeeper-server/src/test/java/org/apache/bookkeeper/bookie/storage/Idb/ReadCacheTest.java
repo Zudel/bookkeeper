@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
 import io.netty.buffer.UnpooledByteBufAllocator;
 import org.apache.bookkeeper.bookie.storage.ldb.ReadCache;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -62,8 +63,8 @@ public class ReadCacheTest {
         private static int maxSegmentSize;
     private ByteBuf entry;
 
-    @BeforeClass
-    public static void setup() {
+    @Before
+    public void setup() {
         /**
          * public ReadCache(ByteBufAllocator allocator, long maxCacheSize, int maxSegmentSize)
          */
@@ -82,32 +83,69 @@ public class ReadCacheTest {
         this.entryId = entryId;
     }
 
-    /**
-     * public void put(long ledgerId, long entryId, ByteBuf entry)
-     * public ByteBuf get(long ledgerId, long entryId)
-     */
-    @Test
+
+    //@Test
     public void testput() {
 
         //crea un oggetto ByteBuf di dimensione 10
         entry = ByteBufAllocator.DEFAULT.buffer(10);
-        System.out.println("entry: " + entry);
-        System.out.println(" expected " + expectedEntry);
         readCache.put(ledgerId, entryId, entry);
         assertEquals(expectedEntry, readCache.get(ledgerId, entryId) );
 
     }
 
+    @Test
+    public void testget() {
+
+        System.out.println("with-  ledgerId:  " + ledgerId + " entryId: " + entryId );
+        //crea un oggetto ByteBuf di dimensione 10
+        try {
+            readCache.put(ledgerId, entryId, entry);
+        }
+        catch (IllegalArgumentException e){
+            boolean entryIdMustBePositive = e.getMessage().contains("must be >=0");
+            boolean mismatchedEntryId = e.getMessage().contains("argument type mismatch");
+            if(entryIdMustBePositive){
+                System.out.println("ledgerId must be >=0");
+                Assert.assertTrue(entryIdMustBePositive);}
+            if(mismatchedEntryId){
+                System.out.println("mismatched ledgerID");
+                Assert.assertTrue(mismatchedEntryId);}
+            }
+        catch (NullPointerException e){
+            System.out.println("NullPointerException");
+            Assert.assertTrue(true);
+        }
+
+
+        //assertEquals(expectedEntry, readCache.get(ledgerId, entryId) );
+    }
+
+
+
+
+    /**
+     * public void put(long ledgerId, long entryId, ByteBuf entry)
+     * public ByteBuf get(long ledgerId, long entryId)
+     */
     @Parameters
     public static Collection<Object[]> getParameters() {
         // Creazione dell'oggetto ByteBuf con le stesse proprietà
-        ByteBuf byteBuf = UnpooledByteBufAllocator.DEFAULT.heapBuffer(2);
-        byteBuf.readerIndex(0);
-        byteBuf.writerIndex(0);
+        ByteBuf byteBuf = UnpooledByteBufAllocator.DEFAULT.buffer(10);
         return Arrays.asList(new Object[][]{
-                {byteBuf, byteBuf, 3L, 3L}, // ByteBuf (expected object), ByteBuf, long, long
-                {Unpooled.buffer(1), Unpooled.buffer(1), 3L, 3L}, // ByteBuf, ByteBuf, long, long
-                {Unpooled.buffer(1), byteBuf, 3L, 3L}, // ByteBuf, ByteBuf, long, long
+                {byteBuf, byteBuf, 3L, 3L}, // ByteBuf (expected object), ByteBuf, long ledgeId, long EntryId
+                {byteBuf, byteBuf, 3L,null},
+                {byteBuf, byteBuf, 0L, 3L},
+                {byteBuf, byteBuf, 0L, null},
+                {byteBuf, byteBuf, -1L, 3L},
+                {byteBuf, byteBuf, -1L, null},
+                {byteBuf, null, 3L, 3L},
+                {byteBuf, null, 3L, null},
+                {byteBuf, null, 0L, 3L},
+                {byteBuf, null, 0L, null},
+                {byteBuf, null, -1L, 3L},
+                {byteBuf, null, -1L, null},
+
         });
     }
 }

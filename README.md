@@ -51,3 +51,10 @@ We feel that a welcoming open community is important and welcome contributions.
 3. Review our [coding style](https://bookkeeper.apache.org/community/coding-guide/) and follow our [pull requests](https://github.com/apache/bookkeeper/pulls) to learn more about our conventions.
 
 4. Make your changes according to our [contributing guide](https://bookkeeper.apache.org/community/contributing/)
+
+
+### Testing Documentation
+compile with the command without PIT:\
+```mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent verify``` \
+compile with the command with PIT:\
+```mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent verify -Pit```

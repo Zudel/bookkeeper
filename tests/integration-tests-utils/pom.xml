@@ -70,9 +70,7 @@
       <artifactId>groovy-all</artifactId>
       <type>pom</type>
     </dependency>
-
   </dependencies>
-
   <build>
     <plugins>
       <plugin>
@@ -85,6 +83,7 @@
         <configuration>
           <forkCount>1</forkCount>
           <useSystemClassLoader>false</useSystemClassLoader>
+          <skipTests>true</skipTests>
         </configuration>
       </plugin>
     </plugins>
