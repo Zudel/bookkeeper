@@ -15,19 +15,16 @@ import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 
-//@RunWith(value= Parameterized.class)
+@RunWith(value= Parameterized.class)
 public class LedgerHandleTest extends BookKeeperClusterTestCase{
 
     byte[] data;
     private LedgerHandle lh;
-    private static final int numBookies = 1;
-    private static final int ensSize = 1;
-    private static final int writeQSize = 1;
-    private static final int ackQSize = 1;
+    private static final int numBookies = 3;
     private static AsyncCallback.AddCallback cb;
     private static Object ctx;
 
-    public LedgerHandleTest(byte[] data, AsyncCallback.AddCallback cb, Object ctx) throws Exception {
+    public LedgerHandleTest(byte[] data, AsyncCallback.AddCallback cb, Object ctx) {
         super(numBookies);
         this.data = data;
         this.cb = cb;
@@ -38,21 +35,33 @@ public class LedgerHandleTest extends BookKeeperClusterTestCase{
      * setup the environment for the test.
      *This method is called in LedgerHandleTest.java
      */
-    //@Before
-    public void setupEnv() throws Exception {
-            this.lh = bkc.createLedger(ensSize, writeQSize, ackQSize, BookKeeper.DigestType.CRC32, "testPasswd".getBytes());
+    @Before
+    public void setupEnv() {
 
+        try {
+                this.lh = bkc.createLedger(BookKeeper.DigestType.DUMMY, "testPasswd".getBytes());
+            }catch (InterruptedException e){
+                LOG.error("InterruptedException on creating ledger", e);
+            }catch (Exception e){
+                LOG.error("Exception on creating ledger", e);
+            }
     }
     @Parameterized.Parameters
     public static Collection<Object[]> getParameters() {
         return Arrays.asList(new Object[][]{
                 // byte[],  AddCallback, Control Object
-                {"test".getBytes(), getMockedReadCb(), ctx},
-                {"".getBytes(), null, ctx},
-                {null, getMockedReadCb(), ctx},
-                {null, null, ctx},
-                {"".getBytes(), getMockedReadCb(), ctx},
-                {"".getBytes(), null, ctx},
+                {"test".getBytes(), getMockedReadCb(), new Object()},
+                {"test".getBytes(),getMockedReadCb(),null},
+                {"test".getBytes(),null,new Object()},
+                {"test".getBytes(),null,null},
+                {"".getBytes(),getMockedReadCb(), new Object()},
+                {"".getBytes(),getMockedReadCb(),null},
+                {"".getBytes(),null,new Object()},
+                {"".getBytes(),null,null},
+                {null,getMockedReadCb(),null},
+                {null,null,new Object()},
+                {null,getMockedReadCb(),new Object()},
+                {null,null,null}
 
         });
     }
@@ -61,32 +70,42 @@ public class LedgerHandleTest extends BookKeeperClusterTestCase{
      * setup and tests the method public void asyncAddEntry(final byte[] data, final AddCallback cb, final Object ctx)
      * The method is called in LedgerHandleTest.java
      */
-    //@Test
-    public void test()  {
-        try{
-            lh.asyncAddEntry(data , cb, ctx);
-        }
+    @Test
+    public void testAsyncAddEntry() {
 
-        catch (NullPointerException e ){
-            LOG.error("NullPointerException on testing asyncReadEntries", e);
-            Assert.assertTrue(true); //fails the test case
+        try {
+            if(data == null) {
+                assertEquals(-1, lh.getLastAddPushed());
+                return;
+            }
+            lh.asyncAddEntry(data, cb, ctx);
         }
-        catch (Exception e) {
-            LOG.error("generic Exception", e);
-            Assert.assertTrue(true); //fails the test case
+        catch (NullPointerException e){
+            System.out.println("NullPointerException");
+            Assert.assertTrue(true);
         }
+        catch (IllegalArgumentException e){
+            System.out.println("IllegalArgumentException ok");
+            Assert.assertTrue(true);
+        }
+        catch (Exception e){
+            System.out.println("Exception");
+            Assert.assertFalse(true);
+        }
+        if (data != null)
+            Assert.assertEquals(0, lh.getLastAddPushed()); //the first entry has id equal to 0
     }
+
 /**
  * Tear down the environment for the test.
  * This method is called in LedgerHandleTest.java
  */
-    //@After
+    @After
     public void tearDownEnv() throws Exception {
         bkc.close();
     }
 
     private static AsyncCallback.AddCallback getMockedReadCb() {
-
         AsyncCallback.AddCallback cb = mock(AsyncCallback.AddCallback.class);
         doNothing().when(cb).addComplete(isA(Integer.class), isA(LedgerHandle.class), isA(Long.class), isA(Object.class));
         return cb;

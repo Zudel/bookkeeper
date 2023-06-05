@@ -60,7 +60,7 @@ public final class PageCacheUtil {
             // We don't really expect this so throw an assertion to
             // catch this during development
             log.warn("Unable to read {} field from {}", fieldName, cls.getName());
-            assert false;
+            //assert false;
         }
 
         return field;

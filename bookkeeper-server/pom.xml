@@ -24,6 +24,7 @@
   </parent>
   <artifactId>bookkeeper-server</artifactId>
   <name>Apache BookKeeper :: Server</name>
+
   <properties>
     <maven.compiler.source>18</maven.compiler.source>
     <maven.compiler.target>18</maven.compiler.target>
@@ -40,6 +41,7 @@
       <artifactId>bookkeeper-common-allocator</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
+
     <dependency>
       <groupId>org.apache.bookkeeper</groupId>
       <artifactId>bookkeeper-proto</artifactId>
@@ -214,7 +216,7 @@
       <version>${project.parent.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
+       <dependency>
       <groupId>org.awaitility</groupId>
       <artifactId>awaitility</artifactId>
       <scope>test</scope>
@@ -353,17 +355,10 @@
       </activation>
       <properties>
         <!-- Use a stable version istead of SNAPSHOT one -->
-        <ba-dua.version>0.6.0</ba-dua.version>
+        <ba-dua.version>0.7.0</ba-dua.version>
         <argLine>-javaagent:target/dependency/ba-dua-agent-rt-${ba-dua.version}-all.jar -Doutput.file=target/badua.ser</argLine>
       </properties>
       <!-- Needed for generate the report -->
-      <dependencies>
-        <dependency>
-          <groupId>br.usp.each.saeg</groupId>
-          <artifactId>ba-dua-cli</artifactId>
-          <version>${ba-dua.version}</version>
-        </dependency>
-      </dependencies>
       <build>
         <plugins>
 
@@ -384,6 +379,9 @@
                       <artifactId>ba-dua-agent-rt</artifactId>
                       <classifier>all</classifier>
                       <version>${ba-dua.version}</version>
+                    <groupId>br.usp.each.saeg</groupId>
+                    <artifactId>ba-dua</artifactId>
+                    <version>0.7.0</version>
                     </artifactItem>
                   </artifactItems>
                 </configuration>
