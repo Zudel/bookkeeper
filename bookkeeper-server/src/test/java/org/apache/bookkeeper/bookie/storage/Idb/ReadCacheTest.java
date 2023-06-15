@@ -60,78 +60,55 @@ public class ReadCacheTest {
     private  ByteBuf expectedEntry;
     private long ledgerId;
     private long entryId;
+    private static final ByteBuf byteBuf = Unpooled.buffer(10);
         private static long maxCacheSize;
         private static int maxSegmentSize;
     private ByteBuf entry;
+    private ByteBuf byteBufRes;
 
+    /**
+     * public ReadCache(ByteBufAllocator allocator, long maxCacheSize, int maxSegmentSize)
+     */
     @Before
     public void setup()  {
-         /**
-         * public ReadCache(ByteBufAllocator allocator, long maxCacheSize, int maxSegmentSize)
-         */
-        //
+
         allocator = ByteBufAllocator.DEFAULT;
         maxCacheSize = 100;
-        maxSegmentSize = 10; // must be > 0, otherwise we will get an exception
+        maxSegmentSize = 10;
 
         readCache = new ReadCache(allocator, maxCacheSize, maxSegmentSize);
     }
 
     public ReadCacheTest(ByteBuf expectedEntry, ByteBuf entry, long ledgerId, long entryId) {
-
-
-        try{
             this.expectedEntry = expectedEntry;
             this.entry = entry;
             this.ledgerId = ledgerId;
-            this.entryId = entryId;}
-        catch (NullPointerException e){
-            System.out.println("NullPointerException");
-            Assert.assertTrue(true);
-        }
-        catch (IllegalArgumentException e){
-            System.out.println("IllegalArgumentException ok");
-            Assert.assertTrue(true);
-        }
-        catch (Exception e){
-            System.out.println("Exception");
-            Assert.assertTrue(true);
-        }
+            this.entryId = entryId;
+
     }
 
     @Test
     public void testput() {
 
-        System.out.println("with-  ledgerId:  " + ledgerId + " entryId: " + entryId);
-        //crea un oggetto ByteBuf di dimensione 10
         try {
-
-        }
-        catch (IllegalArgumentException e){
-            System.out.println("Exception");
-            Assert.assertTrue(true);
-        }
-        try {
+            if(ledgerId < 0 || entryId < 0)
+                throw new IllegalArgumentException("ledgerId and entryId must be >=0");
 
             readCache.put(ledgerId, entryId, entry);
-        } catch (IllegalArgumentException e) {
-            boolean entryIdMustBePositive = e.getMessage().contains("must be >=0");
-            boolean mismatchedEntryId = e.getMessage().contains("argument type mismatch");
-            if (entryIdMustBePositive) {
-                System.out.println("ledgerId must be >=0");
-                Assert.assertTrue(entryIdMustBePositive);
-            }
+            byteBufRes = readCache.get(ledgerId, entryId);
 
-            //assertEquals(expectedEntry, readCache.get(ledgerId, entryId) );
+        } catch (IllegalArgumentException e) {
+                Assert.assertTrue(ledgerId < 0 || entryId < 0);
         }catch (NullPointerException e){
-            System.out.println("NullPointerException on testput -> entry: " + entry);
-            Assert.assertTrue(true);
+            Assert.assertNull(entry);
         }
-        catch (Exception e){
-            System.out.println("Exception");
-            Assert.assertTrue(true);
-        }
+
+        if (expectedEntry == null)
+            Assert.assertNull(byteBufRes);
+        else
+            Assert.assertEquals(expectedEntry, byteBufRes); // expected, actual
     }
+
 
 
     /**
@@ -141,20 +118,15 @@ public class ReadCacheTest {
     @Parameters
     public static Collection<Object[]> getParameters() {
         // Creazione dell'oggetto ByteBuf con le stesse proprietà
-        ByteBuf byteBuf = UnpooledByteBufAllocator.DEFAULT.buffer(10);
         return Arrays.asList(new Object[][]{
                 {byteBuf, byteBuf, 3L, 3L}, // ByteBuf (expected object), ByteBuf, long ledgeId, long EntryId
-                {byteBuf, byteBuf, 3L,null},
-                {byteBuf, byteBuf, 0L, 3L},
-                {byteBuf, byteBuf, 0L,null },
-                {byteBuf, byteBuf, -1L, 3L},
-                {byteBuf, byteBuf, -1L, null},
-                {byteBuf, null, 3L, 3L},
-                {byteBuf, null, 3L, null},
-                {byteBuf, null, 0L, 3L},
-                {byteBuf, null, 0L, null},
-                {byteBuf, null, -1L, 3L},
-                {byteBuf, null, -1L, null},
+                {null, byteBuf, 3L,-1L},
+                {null, byteBuf, -1L, 3L},
+                {null, byteBuf, -1L, -1L},
+                {null, null, 3L, 3L},
+                {null, null, 3L, -1L},
+                {null, null, -1L, 3L},
+                {null, null, -1L, -1L},
         });
     }
 }

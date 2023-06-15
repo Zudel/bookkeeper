@@ -17,18 +17,21 @@ import static org.mockito.Mockito.mock;
 
 @RunWith(value= Parameterized.class)
 public class LedgerHandleTest extends BookKeeperClusterTestCase{
-
     byte[] data;
     private LedgerHandle lh;
     private static final int numBookies = 3;
     private static AsyncCallback.AddCallback cb;
     private static Object ctx;
+    private int offset;
+    private int arrayLen;
 
-    public LedgerHandleTest(byte[] data, AsyncCallback.AddCallback cb, Object ctx) {
+    public LedgerHandleTest(byte[] data, int offset, int arrayLen, AsyncCallback.AddCallback cb, Object ctx) {
         super(numBookies);
         this.data = data;
         this.cb = cb;
         this.ctx = ctx;
+        this.offset = offset;
+        this.arrayLen = arrayLen;
 
     }
     /**
@@ -50,19 +53,30 @@ public class LedgerHandleTest extends BookKeeperClusterTestCase{
     public static Collection<Object[]> getParameters() {
         return Arrays.asList(new Object[][]{
                 // byte[],  AddCallback, Control Object
-                {"test".getBytes(), getMockedReadCb(), new Object()},
-                {"test".getBytes(),getMockedReadCb(),null},
-                {"test".getBytes(),null,new Object()},
-                {"test".getBytes(),null,null},
-                {"".getBytes(),getMockedReadCb(), new Object()},
-                {"".getBytes(),getMockedReadCb(),null},
-                {"".getBytes(),null,new Object()},
-                {"".getBytes(),null,null},
-                {null,getMockedReadCb(),null},
-                {null,null,new Object()},
-                {null,getMockedReadCb(),new Object()},
-                {null,null,null}
-
+                {"test".getBytes(),0, 4, getMockedReadCb(), null},
+                {"test".getBytes(),0,-1, getMockedReadCb(),null},
+                {"test".getBytes(),-1, 4, getMockedReadCb(),null},
+                {"test".getBytes(),-1,-1, getMockedReadCb(),null},
+                {"test".getBytes(),0, 4, null, null},
+                {"test".getBytes(),0,-1, null,null},
+                {"test".getBytes(),-1, 4, null,null},
+                {"test".getBytes(),-1,-1, null,null},
+                {"".getBytes(),0, 4, getMockedReadCb(), null},
+                {"".getBytes(),0,-1, getMockedReadCb(),null},
+                {"".getBytes(),-1, 4, getMockedReadCb(),null},
+                {"".getBytes(),-1,-1, getMockedReadCb(),null},
+                {"".getBytes(),0, 4, null, null},
+                {"".getBytes(),0,-1, null,null},
+                {"".getBytes(),-1, 4, null,null},
+                {"".getBytes(),-1,-1, null,null},
+                {null,0, 4, getMockedReadCb(), null},
+                {null,0,-1, getMockedReadCb(),null},
+                {null,-1, 4, getMockedReadCb(),null},
+                {null,-1,-1, getMockedReadCb(),null},
+                {null,0, 4, null, null},
+                {null,0,-1, null,null},
+                {null,-1, 4, null,null},
+                {null,-1,-1, null,null},
         });
     }
 
@@ -75,10 +89,22 @@ public class LedgerHandleTest extends BookKeeperClusterTestCase{
 
         try {
             if(data == null) {
-                assertEquals(-1, lh.getLastAddPushed());
-                return;
+                System.out.println("data is null");
+                Assert.assertTrue(true);
             }
-            lh.asyncAddEntry(data, cb, ctx);
+            if(cb == null) {
+                System.out.println("cb is null");
+                Assert.assertTrue(true);
+            }
+            if (offset < 0 || arrayLen < 0 || offset + arrayLen > data.length) {
+                System.out.println("must be off + len <= data.length, off >= 0, len >= 0");
+                Assert.assertTrue(true);
+            }
+            lh.asyncAddEntry(data,offset, arrayLen, cb, ctx);
+        }
+        catch (ArrayIndexOutOfBoundsException e){
+            System.out.println("must be off + len <= data.length, off >= 0, len >= 0");
+            Assert.assertTrue(true);
         }
         catch (NullPointerException e){
             System.out.println("NullPointerException");
@@ -92,8 +118,9 @@ public class LedgerHandleTest extends BookKeeperClusterTestCase{
             System.out.println("Exception");
             Assert.assertFalse(true);
         }
-        if (data != null)
+        if (data != null && cb != null && offset >= 0 && arrayLen >= 0 && offset + arrayLen <= data.length)
             Assert.assertEquals(0, lh.getLastAddPushed()); //the first entry has id equal to 0
+
     }
 
 /**

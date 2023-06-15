@@ -25,6 +25,13 @@
   <artifactId>bookkeeper-server</artifactId>
   <name>Apache BookKeeper :: Server</name>
 
+  <repositories>
+    <repository>
+      <id>repo ba-dua</id>
+      <url>file:///C:\Users\Roberto\Downloads\ba-dua-ba-dua-0.6.0\ba-dua-ba-dua-0.6.0</url>
+    </repository>
+  </repositories>
+
   <properties>
     <maven.compiler.source>18</maven.compiler.source>
     <maven.compiler.target>18</maven.compiler.target>
@@ -355,7 +362,7 @@
       </activation>
       <properties>
         <!-- Use a stable version istead of SNAPSHOT one -->
-        <ba-dua.version>0.7.0</ba-dua.version>
+        <ba-dua.version>0.6.0</ba-dua.version>
         <argLine>-javaagent:target/dependency/ba-dua-agent-rt-${ba-dua.version}-all.jar -Doutput.file=target/badua.ser</argLine>
       </properties>
       <!-- Needed for generate the report -->
@@ -381,7 +388,7 @@
                       <version>${ba-dua.version}</version>
                     <groupId>br.usp.each.saeg</groupId>
                     <artifactId>ba-dua</artifactId>
-                    <version>0.7.0</version>
+                    <version>0.6.0</version>
                     </artifactItem>
                   </artifactItems>
                 </configuration>
@@ -437,10 +444,13 @@
             <version>1.14.1</version>
             <configuration>
               <targetClasses>
-                <!-- param class here -->
+                <param>org.apache.bookkeeper.client.LedgerHandle</param>
+                <param>org.apache.bookkeeper.bookie.storage.ldb.ReadCache</param>
               </targetClasses>
               <targetTests>
-                <!-- param test here-->
+                <param>org.apache.bookkeeper.client.LedgerHandleTest</param>
+                <param>org.apache.bookkeeper.bookie.storage.Idb.ReadCacheTest</param>
+                <param>org.apache.bookkeeper.bookie.storage.Idb.ReadCacheVerifyEntryTest</param>
               </targetTests>
               <avoidCallsTo>
                 <avoidCallsTo>org.slf4j</avoidCallsTo>

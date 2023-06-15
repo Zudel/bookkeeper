@@ -56,5 +56,8 @@ We feel that a welcoming open community is important and welcome contributions.
 ### Testing Documentation
 compile with the command without PIT:\
 ```mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent verify``` \
+```mvn clean -pl bookkeeper-server verify -Pba-dua-coverage``` \
+
 compile with the command with PIT:\
-```mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent verify -Pit```
+```mvn clean -pl bookkeeper-server test -Pmutation-testing``` 
+
