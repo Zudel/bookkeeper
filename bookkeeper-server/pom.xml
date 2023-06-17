@@ -25,17 +25,15 @@
   <artifactId>bookkeeper-server</artifactId>
   <name>Apache BookKeeper :: Server</name>
 
-  <repositories>
+  <!--<repositories>
     <repository>
       <id>repo ba-dua</id>
-      <url>file:///C:\Users\Roberto\Downloads\ba-dua-ba-dua-0.6.0\ba-dua-ba-dua-0.6.0</url>
+      <url>C:\Users\Roberto\Desktop\ba-dua</url>
     </repository>
-  </repositories>
+  </repositories>-->
 
-  <properties>
-    <maven.compiler.source>18</maven.compiler.source>
-    <maven.compiler.target>18</maven.compiler.target>
-  </properties>
+
+
 
   <dependencies>
     <dependency>
@@ -206,11 +204,15 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-       <!-- needed by ZooKeeper server tests utilities -->
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+    </dependency>
+    <!--<dependency>
        <groupId>org.junit.jupiter</groupId>
        <artifactId>junit-jupiter-api</artifactId>
        <scope>test</scope>
-    </dependency>
+    </dependency>-->
     <dependency>
       <groupId>org.apache.bookkeeper.stats</groupId>
       <artifactId>prometheus-metrics-provider</artifactId>
@@ -234,6 +236,9 @@
         <version>1.14.1</version>
       <type>maven-plugin</type>
     </dependency>
+
+
+
   </dependencies>
   <build>
     <plugins>
@@ -282,16 +287,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>${maven-surefire-plugin.version}</version>
-        <!--<configuration>
-          <trimStackTrace>false</trimStackTrace>
-          <properties>
-            <property>
-              <name>listener</name>
-              <value>org.apache.bookkeeper.common.testing.util.TimedOutTestsListener</value>
-            </property>
-          </properties>
-        </configuration>-->
+        <version>3.0.0-M5</version>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -323,6 +319,9 @@
   <profiles>
     <profile>
       <id>vertx-http-server</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
       <dependencies>
         <dependency>
           <groupId>org.apache.bookkeeper.http</groupId>
@@ -333,11 +332,15 @@
     </profile>
     <profile>
       <id>tls-certs</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+      </activation>
       <build>
         <plugins>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
+
             <executions>
               <execution>
                 <id>Generate Self-Signed Certificates</id>
@@ -361,19 +364,24 @@
         <activeByDefault>false</activeByDefault>
       </activation>
       <properties>
-        <!-- Use a stable version istead of SNAPSHOT one -->
-        <ba-dua.version>0.6.0</ba-dua.version>
-        <argLine>-javaagent:target/dependency/ba-dua-agent-rt-${ba-dua.version}-all.jar -Doutput.file=target/badua.ser</argLine>
+        <argLine> -javaagent:target/dependency/ba-dua-agent-rt-0.8.1-SNAPSHOT-all.jar -Doutput.file=target/badua.ser</argLine>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <ba-dua.version>0.8.1-SNAPSHOT</ba-dua.version>
       </properties>
+      <dependencies>
+        <dependency>
+          <groupId>br.usp.each.saeg</groupId>
+          <artifactId>ba-dua-cli</artifactId>
+          <version>0.8.1-SNAPSHOT</version>
+        </dependency>
+      </dependencies>
       <!-- Needed for generate the report -->
       <build>
         <plugins>
-
-          <!-- Copy ba-dua-agent-rt from .m2 directory to target/dependency -->
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-dependency-plugin</artifactId>
-            <version>3.4.0</version>
+            <version>2.10</version>
             <executions>
               <execution>
                 <goals>
@@ -385,22 +393,17 @@
                       <groupId>br.usp.each.saeg</groupId>
                       <artifactId>ba-dua-agent-rt</artifactId>
                       <classifier>all</classifier>
-                      <version>${ba-dua.version}</version>
-                    <groupId>br.usp.each.saeg</groupId>
-                    <artifactId>ba-dua</artifactId>
-                    <version>0.6.0</version>
+                      <version>0.8.1-SNAPSHOT</version>
                     </artifactItem>
                   </artifactItems>
                 </configuration>
               </execution>
             </executions>
           </plugin>
-
-          <!-- Generate report in xml format -->
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
-            <version>3.1.0</version>
+            <version>1.5.0</version>
             <executions>
               <execution>
                 <goals>
@@ -470,5 +473,6 @@
       </build>
     </profile>
     </profiles>
+
 
 </project>
