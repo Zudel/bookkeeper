@@ -691,7 +691,6 @@ public class LedgerHandle implements WriteHandle {
 
         asyncReadEntriesInternal(firstEntry, lastEntry, cb, ctx, false);
     }
-
     /**
      * Read a sequence of entries asynchronously, allowing to read after the LastAddConfirmed range.
      * <br>This is the same of
@@ -727,7 +726,6 @@ public class LedgerHandle implements WriteHandle {
             cb.readComplete(BKException.Code.IncorrectParameterException, this, null, ctx);
             return;
         }
-
         asyncReadEntriesInternal(firstEntry, lastEntry, cb, ctx, false);
     }
 

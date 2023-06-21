@@ -891,7 +891,7 @@ public class BookKeeper implements org.apache.bookkeeper.client.api.BookKeeper {
      */
     public LedgerHandle createLedger(DigestType digestType, byte[] passwd)
             throws BKException, InterruptedException {
-        return createLedger(3, 2, digestType, passwd);
+        return createLedger(2, 2, digestType, passwd);
     }
 
     /**

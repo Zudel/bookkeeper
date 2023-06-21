@@ -1,21 +1,16 @@
 package org.apache.bookkeeper.client;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import java.net.BindException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Enumeration;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 
-//@RunWith(value= Parameterized.class)
+@RunWith(value= Parameterized.class)
 public class LedgerHandleTest extends BookKeeperClusterTestCase{
     byte[] data;
     private LedgerHandle lh;
@@ -42,7 +37,7 @@ public class LedgerHandleTest extends BookKeeperClusterTestCase{
     public void setupEnv() {
 
         try {
-                this.lh = bkc.createLedger(BookKeeper.DigestType.DUMMY, "testPasswd".getBytes());
+                this.lh = bkc.createLedger(BookKeeper.DigestType.DUMMY, "test".getBytes());
             }catch (InterruptedException e){
 
             }catch (Exception e){
@@ -52,73 +47,61 @@ public class LedgerHandleTest extends BookKeeperClusterTestCase{
     @Parameterized.Parameters
     public static Collection<Object[]> getParameters() {
         return Arrays.asList(new Object[][]{
-                // byte[],  AddCallback, Control Object
-                {"test".getBytes(),0, 4, getMockedReadCb(), null},
-                /*{"test".getBytes(),0,-1, getMockedReadCb(),null},
-                {"test".getBytes(),-1, 4, getMockedReadCb(),null},
-                {"test".getBytes(),-1,-1, getMockedReadCb(),null},
+                // byte[] ,offset, data.size()  AddCallback, Control Object
+                {"test".getBytes(),0, 4, getMockedCb(), null},
+                {"test".getBytes(),0,-1, getMockedCb(),null},
+                {"test".getBytes(),-1, 4, getMockedCb(),null},
+                {"test".getBytes(),-1,-1, getMockedCb(),null},
                 {"test".getBytes(),0, 4, null, null},
                 {"test".getBytes(),0,-1, null,null},
                 {"test".getBytes(),-1, 4, null,null},
                 {"test".getBytes(),-1,-1, null,null},
-                {"".getBytes(),0, 4, getMockedReadCb(), null},
-                {"".getBytes(),0,-1, getMockedReadCb(),null},
-                {"".getBytes(),-1, 4, getMockedReadCb(),null},
-                {"".getBytes(),-1,-1, getMockedReadCb(),null},
+                {"".getBytes(),0, 4, getMockedCb(), null},
+                {"".getBytes(),0,-1, getMockedCb(),null},
+                {"".getBytes(),-1, 4, getMockedCb(),null},
+                {"".getBytes(),-1,-1, getMockedCb(),null},
                 {"".getBytes(),0, 4, null, null},
                 {"".getBytes(),0,-1, null,null},
                 {"".getBytes(),-1, 4, null,null},
                 {"".getBytes(),-1,-1, null,null},
-                {null,0, 4, getMockedReadCb(), null},
-                {null,0,-1, getMockedReadCb(),null},
-                {null,-1, 4, getMockedReadCb(),null},
-                {null,-1,-1, getMockedReadCb(),null},
+                {null,0, 4, getMockedCb(), null},
+                {null,0,-1, getMockedCb(),null},
+                {null,-1, 4, getMockedCb(),null},
+                {null,-1,-1, getMockedCb(),null},
                 {null,0, 4, null, null},
                 {null,0,-1, null,null},
                 {null,-1, 4, null,null},
-                {null,-1,-1, null,null}*/
+                {null,-1,-1, null,null}
         });
     }
 
     /**
-     * setup and tests the method public void asyncAddEntry(final byte[] data, final AddCallback cb, final Object ctx)
+     * setup and tests the method public void asyncAddEntry(final byte[] data, final int offset, final int length,
+     *                               final AddCallback cb, final Object ctx)
      * The method is called in LedgerHandleTest.java
      */
-    //@Test
+    @Test
     public void testAsyncAddEntry() {
-
         try {
             if(data == null) {
-                Assert.assertTrue(true);
+                throw new NullPointerException("data is null");
             }
             if(cb == null) {
-
-                Assert.assertTrue(true);
+                throw new NullPointerException("callback is null");
             }
             if (offset < 0 || arrayLen < 0 || offset + arrayLen > data.length) {
-                Assert.assertTrue(true);
+                throw new ArrayIndexOutOfBoundsException("Invalid offset or arrayLen");
             }
             lh.asyncAddEntry(data,offset, arrayLen, cb, ctx);
         }
         catch (ArrayIndexOutOfBoundsException e){
-
-            Assert.assertTrue(true);
+            Assert.assertNotNull(e);
         }
         catch (NullPointerException e){
-
-            Assert.assertTrue(true);
-        }
-        catch (IllegalArgumentException e){
-
-            Assert.assertTrue(true);
-        }
-        catch (Exception e){
-
-            Assert.assertFalse(true);
+            Assert.assertNotNull(e);
         }
         if (data != null && cb != null && offset >= 0 && arrayLen >= 0 && offset + arrayLen <= data.length)
             Assert.assertEquals(0, lh.getLastAddPushed()); //the first entry has id equal to 0
-
     }
 
 /**
@@ -129,8 +112,7 @@ public class LedgerHandleTest extends BookKeeperClusterTestCase{
     public void tearDownEnv() throws Exception {
         bkc.close();
     }
-
-    private static AsyncCallback.AddCallback getMockedReadCb() {
+    protected static AsyncCallback.AddCallback getMockedCb() {
         AsyncCallback.AddCallback cb = mock(AsyncCallback.AddCallback.class);
         doNothing().when(cb).addComplete(isA(Integer.class), isA(LedgerHandle.class), isA(Long.class), isA(Object.class));
         return cb;

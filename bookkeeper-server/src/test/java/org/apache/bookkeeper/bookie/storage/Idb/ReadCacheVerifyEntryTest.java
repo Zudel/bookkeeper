@@ -53,6 +53,7 @@ import java.util.Collection;
             try{
                 if(ledgerId < 0 || entryId < 0)
                     throw new IllegalArgumentException("ledgerId and entryId must be >=0");
+
                res = readCache.hasEntry(ledgerId, entryId);
             } catch (IllegalArgumentException e) {
                 Assert.assertNotNull(e);
