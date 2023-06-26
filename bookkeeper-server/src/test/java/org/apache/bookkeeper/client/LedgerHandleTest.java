@@ -71,7 +71,9 @@ public class LedgerHandleTest extends BookKeeperClusterTestCase{
                 {null,0, 4, null, null},
                 {null,0,-1, null,null},
                 {null,-1, 4, null,null},
-                {null,-1,-1, null,null}
+                {null,-1,-1, null,null},
+
+
         });
     }
 
@@ -83,22 +85,13 @@ public class LedgerHandleTest extends BookKeeperClusterTestCase{
     @Test
     public void testAsyncAddEntry() {
         try {
-            if(data == null) {
-                throw new NullPointerException("data is null");
-            }
-            if(cb == null) {
-                throw new NullPointerException("callback is null");
-            }
-            if (offset < 0 || arrayLen < 0 || offset + arrayLen > data.length) {
-                throw new ArrayIndexOutOfBoundsException("Invalid offset or arrayLen");
-            }
             lh.asyncAddEntry(data,offset, arrayLen, cb, ctx);
         }
         catch (ArrayIndexOutOfBoundsException e){
-            Assert.assertNotNull(e);
+            Assert.assertTrue(offset < 0 || arrayLen < 0 || offset + arrayLen > data.length);
         }
         catch (NullPointerException e){
-            Assert.assertNotNull(e);
+            Assert.assertTrue(cb == null || data == null);
         }
         if (data != null && cb != null && offset >= 0 && arrayLen >= 0 && offset + arrayLen <= data.length)
             Assert.assertEquals(0, lh.getLastAddPushed()); //the first entry has id equal to 0

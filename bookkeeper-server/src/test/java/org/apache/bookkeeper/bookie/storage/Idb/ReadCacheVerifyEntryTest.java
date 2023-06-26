@@ -16,7 +16,8 @@ import java.util.Collection;
 
 @RunWith(value= Parameterized.class)
     public class ReadCacheVerifyEntryTest {
-        private ReadCache readCache;
+    private boolean flag;
+    private ReadCache readCache;
         private static ByteBufAllocator allocator;
         private long ledgerId;
         private long entryId;
@@ -35,17 +36,19 @@ import java.util.Collection;
             maxCacheSize = 100;
             maxSegmentSize = 10;
             readCache = new ReadCache(allocator, maxCacheSize, maxSegmentSize);
-            try{readCache.put(ledgerId, entryId, byteBuf);}
-            catch (IllegalArgumentException e){
-                Assert.assertNotNull(e);
+            if (flag) {
+                try {
+                    readCache.put(ledgerId, entryId, byteBuf);
+                } catch (IllegalArgumentException e) {
+                    Assert.assertNotNull(e);
+                }
             }
-
         }
 
-        public ReadCacheVerifyEntryTest(long ledgerId, long entryId) {
+        public ReadCacheVerifyEntryTest(long ledgerId, long entryId, boolean flag) {
             this.ledgerId = ledgerId;
             this.entryId = entryId;
-
+            this.flag = flag;
         }
 
         @Test
@@ -59,7 +62,11 @@ import java.util.Collection;
                 Assert.assertNotNull(e);
                 return;
             }
-            Assert.assertEquals(true, res);
+            if (flag)
+                Assert.assertEquals(true, res);
+            else
+                Assert.assertEquals(false, res);
+
         }
 
         /**
@@ -70,10 +77,12 @@ import java.util.Collection;
         public static Collection<Object[]> getParameters() {
             // Creazione dell'oggetto ByteBuf con le stesse proprietà
             return Arrays.asList(new Object[][]{
-                    {3L, 3L}, // long ledgeId, long EntryId
-                    {3L, -1L},
-                    {-1L,3L},
-                    {-1L,-1L}
+                    {3L, 3L, true}, // long ledgeId, long EntryId
+                    {3L, -1L, true},
+                    {-1L,3L,true},
+                    {-1L,-1L, true},
+                    //seconda iterazione
+                    //{3L, 3L, false}
             });
         }
 }

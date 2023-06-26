@@ -19,7 +19,7 @@ import static org.mockito.Mockito.mock;
 
 @RunWith(value= Parameterized.class)
 public class LedgerHandle2Test extends BookKeeperClusterTestCase{
-    private static final int numBookies = 2;
+    private static final int numBookies = 3;
     private LedgerHandle lh;
     private static AsyncCallback.ReadCallback cb;
     private static Object ctx;
@@ -36,37 +36,25 @@ public class LedgerHandle2Test extends BookKeeperClusterTestCase{
         this.firstEntry = firstEntry;
         this.lastEntry = lastEntry;
     }
-
     @Before
-    public void setupEnv() throws BKException, InterruptedException {
-            this.lh = bkc.createLedger(BookKeeper.DigestType.DUMMY, "test".getBytes());
+    public void setupEnv() throws Exception {
+            this.lh = bkc.createLedger(3, 3, 3, BookKeeper.DigestType.CRC32, "testPasswd".getBytes());
+            startNewBookie();
             lh.asyncAddEntry("test".getBytes(), getMockedCb(), null);
 
     }
     @Test
     public void testAsyncReadEntries()  {
         try {
-        if(firstEntry < 0 || lastEntry < 0){
-            throw new IllegalArgumentException("firstEntry < 0 or lastEntry < 0");
-        }
-        if (firstEntry > lastEntry){
-            throw new ArrayIndexOutOfBoundsException("firstEntry > lastEntry");
-        }
-
-            lh.asyncReadEntries(firstEntry, lastEntry, cb, null);
-        }catch (ArrayIndexOutOfBoundsException e){
-            Assert.assertTrue( firstEntry > lastEntry);
+        lh.asyncReadEntries(firstEntry, lastEntry, cb, null);
         }
         catch (IllegalArgumentException e) {
-            Assert.assertTrue(firstEntry<0 || lastEntry<0);
+            Assert.assertTrue(firstEntry<0 || lastEntry<0 || firstEntry>lastEntry);
         }
         catch (NullPointerException e){
             Assert.assertTrue(cb == null);
         }
-
-
     }
-
 
     @Parameterized.Parameters
     public static Collection<Object[]> getParameters() {
@@ -79,7 +67,12 @@ public class LedgerHandle2Test extends BookKeeperClusterTestCase{
                 {0, 0, null, null},
                 {0, 1, null, null},
                 {-1, 0, null, null},
-                {-1, -1, null, null}
+                {-1, -1, null, null},
+                //2° iterazione jacoco
+                //firstEntry > lastEntry
+                //{1, 0, getMockedReadCb(), null},
+                //{1, 0, null, null}
+
 
 
 
