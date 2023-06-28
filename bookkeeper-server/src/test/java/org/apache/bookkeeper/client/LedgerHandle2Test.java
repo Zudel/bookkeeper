@@ -54,6 +54,9 @@ public class LedgerHandle2Test extends BookKeeperClusterTestCase{
         catch (NullPointerException e){
             Assert.assertTrue(cb == null);
         }
+        if (firstEntry<=lastEntry && firstEntry >=0 && cb!=null) {
+            Assert.assertTrue(lh.getLastAddConfirmed()>=lastEntry);
+        }
     }
 
     @Parameterized.Parameters
@@ -74,10 +77,7 @@ public class LedgerHandle2Test extends BookKeeperClusterTestCase{
                 //{1, 0, null, null}
 
 
-
-
         });
-
     }
     @After
     public void tearDownEnv() throws Exception {

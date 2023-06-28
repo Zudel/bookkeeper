@@ -25,13 +25,11 @@ import java.util.Collection;
         private static long maxCacheSize;
         private static int maxSegmentSize;
         private boolean res;
-
         /**
          * public ReadCache(ByteBufAllocator allocator, long maxCacheSize, int maxSegmentSize)
          */
         @Before
         public void setup()  {
-
             allocator = ByteBufAllocator.DEFAULT;
             maxCacheSize = 100;
             maxSegmentSize = 10;

@@ -76,7 +76,6 @@ public class LedgerHandleTest extends BookKeeperClusterTestCase{
 
         });
     }
-
     /**
      * setup and tests the method public void asyncAddEntry(final byte[] data, final int offset, final int length,
      *                               final AddCallback cb, final Object ctx)

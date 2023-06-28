@@ -81,7 +81,6 @@ public class ReadCacheTest {
             this.entry = entry;
             this.ledgerId = ledgerId;
             this.entryId = entryId;
-
     }
 
     @Test
@@ -97,10 +96,8 @@ public class ReadCacheTest {
         }catch (NullPointerException e){
             Assert.assertNull(entry);
         }
-
         if (byteBufRes == null)
             Assert.assertNull(expectedEntry);
-
     }
     @After
     public void closeCache() {
@@ -127,7 +124,8 @@ public class ReadCacheTest {
                 {null, null, -1L, -1L},
                 //seconda iterazione
                 //(entrySize > segmentSize)
-                //{null,byteBuf2,3L, 3L}
+                {null,byteBuf2,3L, 3L},
+
         });
     }
 }
