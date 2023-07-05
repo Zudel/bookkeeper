@@ -52,6 +52,7 @@ public class LedgerHandle2Test extends BookKeeperClusterTestCase{
             Assert.assertTrue(firstEntry<0 || lastEntry<0 || firstEntry>lastEntry);
         }
         catch (NullPointerException e){
+            e.printStackTrace();
             Assert.assertTrue(cb == null);
         }
         if (firstEntry<=lastEntry && firstEntry >=0 && cb!=null) {
@@ -71,10 +72,7 @@ public class LedgerHandle2Test extends BookKeeperClusterTestCase{
                 {0, 1, null, null},
                 {-1, 0, null, null},
                 {-1, -1, null, null},
-                //2° iterazione jacoco
-                //firstEntry > lastEntry
-                //{1, 0, getMockedReadCb(), null},
-                //{1, 0, null, null}
+                {0,-1, getMockedReadCb(), null},
 
 
         });

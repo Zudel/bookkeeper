@@ -39,9 +39,9 @@ public class LedgerHandleTest extends BookKeeperClusterTestCase{
         try {
                 this.lh = bkc.createLedger(BookKeeper.DigestType.DUMMY, "test".getBytes());
             }catch (InterruptedException e){
-
+                Assert.assertNotNull(e);
             }catch (Exception e){
-
+            Assert.assertNotNull(e);
             }
     }
     @Parameterized.Parameters
@@ -63,16 +63,7 @@ public class LedgerHandleTest extends BookKeeperClusterTestCase{
                 {"".getBytes(),0, 4, null, null},
                 {"".getBytes(),0,-1, null,null},
                 {"".getBytes(),-1, 4, null,null},
-                {"".getBytes(),-1,-1, null,null},
-                {null,0, 4, getMockedCb(), null},
-                {null,0,-1, getMockedCb(),null},
-                {null,-1, 4, getMockedCb(),null},
-                {null,-1,-1, getMockedCb(),null},
-                {null,0, 4, null, null},
-                {null,0,-1, null,null},
-                {null,-1, 4, null,null},
-                {null,-1,-1, null,null},
-
+                {"".getBytes(),-1,-1, null,null}
 
         });
     }

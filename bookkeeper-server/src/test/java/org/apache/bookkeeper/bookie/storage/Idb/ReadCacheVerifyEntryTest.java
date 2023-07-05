@@ -80,7 +80,7 @@ import java.util.Collection;
                     {-1L,3L,true},
                     {-1L,-1L, true},
                     //seconda iterazione
-                    //{3L, 3L, false}
+                    {3L, 3L, false}
             });
         }
 }
